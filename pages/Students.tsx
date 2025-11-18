@@ -1,12 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Student, PendingDue } from '../types';
 import { Search, Plus, Filter, Edit2, Trash2, X, Save, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ACADEMIC_YEAR = '2025-26';
 
 const Students = () => {
   const { students, fees, addStudent, updateStudent, deleteStudent, user } = useApp();
+  const navigate = useNavigate();
   
   // State
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
@@ -85,7 +88,8 @@ const Students = () => {
       }
   };
 
-  const openEdit = (s: Student) => {
+  const openEdit = (e: React.MouseEvent, s: Student) => {
+    e.stopPropagation();
     setEditingId(s.id);
     setFormData(JSON.parse(JSON.stringify(s)));
     setIsModalOpen(true);
@@ -122,7 +126,7 @@ const Students = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 className="text-2xl font-bold text-slate-800">Students</h2>
         {(isAdmin || user?.role === 'ACCOUNTANT') && (
-          <button onClick={openNew} className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors">
+          <button onClick={openNew} className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm">
             <Plus size={18} /> Add Student
           </button>
         )}
@@ -174,10 +178,14 @@ const Students = () => {
                 const totalDue = currentOutstanding + prevTotal;
 
                 return (
-                  <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                  <tr 
+                    key={s.id} 
+                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer group"
+                    onClick={() => navigate(`/students/${s.id}`)}
+                  >
                     <td className="px-6 py-4 font-medium text-slate-900">{s.admissionNumber}</td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-slate-900">{s.name}</div>
+                      <div className="font-medium text-slate-900 group-hover:text-blue-600 transition-colors">{s.name}</div>
                       <div className="text-xs text-slate-400">F: {s.fatherName}</div>
                     </td>
                     <td className="px-6 py-4">
@@ -208,7 +216,7 @@ const Students = () => {
                     <td className="px-6 py-4 text-right space-x-2 flex justify-end">
                       {(isAdmin || user?.role === 'ACCOUNTANT') && (
                         <button 
-                            onClick={() => openEdit(s)} 
+                            onClick={(e) => openEdit(e, s)} 
                             className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                             title="Edit"
                         >
@@ -217,7 +225,7 @@ const Students = () => {
                       )}
                        {isAdmin && (
                         <button 
-                            onClick={() => promptDelete(s.id)} 
+                            onClick={(e) => { e.stopPropagation(); promptDelete(s.id); }} 
                             className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors"
                             title="Delete"
                         >

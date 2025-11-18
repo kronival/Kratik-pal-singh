@@ -15,7 +15,10 @@ const Sidebar = () => {
   const { user, logout } = useApp();
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+      if (path === '/') return location.pathname === '/';
+      return location.pathname.startsWith(path);
+  };
 
   const navItemClass = (path: string) => `
     flex items-center gap-3 px-4 py-3 rounded-lg transition-colors mb-1

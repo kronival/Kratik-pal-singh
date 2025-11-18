@@ -6,6 +6,13 @@ export const INITIAL_FEES: FeeStructure[] = [
   { className: 'UKG', tuitionFee: 10000, annualFee: 5000, total: 15000 },
   { className: '1', tuitionFee: 12000, annualFee: 6000, total: 18000 },
   { className: '2', tuitionFee: 12000, annualFee: 6000, total: 18000 },
+  { className: '3', tuitionFee: 13000, annualFee: 6500, total: 19500 },
+  { className: '4', tuitionFee: 13000, annualFee: 6500, total: 19500 },
+  { className: '5', tuitionFee: 14000, annualFee: 7000, total: 21000 },
+  { className: '6', tuitionFee: 14000, annualFee: 7000, total: 21000 },
+  { className: '7', tuitionFee: 15000, annualFee: 7500, total: 22500 },
+  { className: '8', tuitionFee: 15000, annualFee: 7500, total: 22500 },
+  { className: '9', tuitionFee: 18000, annualFee: 8000, total: 26000 },
   { className: '10', tuitionFee: 20000, annualFee: 8000, total: 28000 },
 ];
 

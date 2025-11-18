@@ -9,6 +9,7 @@ import Students from './pages/Students';
 import Payments from './pages/Payments';
 import Fees from './pages/Fees';
 import Reports from './pages/Reports';
+import StudentProfile from './pages/StudentProfile';
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user } = useApp();
@@ -41,6 +42,12 @@ const AppRoutes = () => {
        <Route path="/students" element={
          <ProtectedRoute>
            <Students />
+         </ProtectedRoute>
+       } />
+
+       <Route path="/students/:id" element={
+         <ProtectedRoute>
+           <StudentProfile />
          </ProtectedRoute>
        } />
 
