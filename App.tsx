@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
@@ -9,7 +10,7 @@ import Payments from './pages/Payments';
 import Fees from './pages/Fees';
 import Reports from './pages/Reports';
 
-const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
+const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user } = useApp();
   if (!user) {
     return <Navigate to="/login" replace />;

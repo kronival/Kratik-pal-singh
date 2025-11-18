@@ -1,14 +1,18 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Student, FeeStructure, Payment, User, PendingDue, PaymentAllocation } from '../types';
-import { INITIAL_FEES, INITIAL_STUDENTS, INITIAL_PAYMENTS } from '../services/mockData';
+import { INITIAL_FEES, INITIAL_STUDENTS, INITIAL_PAYMENTS, INITIAL_USERS } from '../services/mockData';
 
 interface AppContextType {
   user: User | null;
-  login: (role: User['role'], name: string) => void;
+  login: (username: string, password?: string) => boolean;
   logout: () => void;
+  users: User[];
   students: Student[];
   fees: FeeStructure[];
   payments: Payment[];
+  saveUser: (user: Partial<User>) => void;
+  deleteUser: (id: string) => void;
   addStudent: (student: Omit<Student, 'id'>) => void;
   updateStudent: (id: string, updates: Partial<Student>) => void;
   deleteStudent: (id: string) => void;
@@ -19,10 +23,15 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider = ({ children }: { children: ReactNode }) => {
+export const AppProvider = ({ children }: { children?: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   
   // Initialize state from localStorage or fall back to mocks
+  const [users, setUsers] = useState<User[]>(() => {
+    const saved = localStorage.getItem('users');
+    return saved ? JSON.parse(saved) : INITIAL_USERS;
+  });
+
   const [students, setStudents] = useState<Student[]>(() => {
     const saved = localStorage.getItem('students');
     return saved ? JSON.parse(saved) : INITIAL_STUDENTS;
@@ -39,15 +48,47 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // Persistence effects
+  useEffect(() => localStorage.setItem('users', JSON.stringify(users)), [users]);
   useEffect(() => localStorage.setItem('students', JSON.stringify(students)), [students]);
   useEffect(() => localStorage.setItem('fees', JSON.stringify(fees)), [fees]);
   useEffect(() => localStorage.setItem('payments', JSON.stringify(payments)), [payments]);
 
-  const login = (role: User['role'], name: string) => {
-    setUser({ id: Date.now().toString(), name, role });
+  const login = (username: string, password?: string) => {
+    // In a real app, verify password. Here, we simulate check.
+    const found = users.find(u => u.username === username);
+    if (found) {
+        // Simple password check (mock)
+        if (password && found.password && password !== found.password) {
+            return false;
+        }
+        setUser(found);
+        return true;
+    }
+    return false;
   };
 
   const logout = () => setUser(null);
+
+  const saveUser = (userData: Partial<User>) => {
+    if (userData.id) {
+        // Update
+        setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData } as User : u));
+    } else {
+        // Create
+        const newUser: User = {
+            id: Math.random().toString(36).substr(2, 9),
+            name: userData.name || '',
+            username: userData.username || '',
+            role: userData.role || 'TEACHER',
+            password: userData.password || '123' // Default if missing
+        };
+        setUsers([...users, newUser]);
+    }
+  };
+
+  const deleteUser = (id: string) => {
+      setUsers(prev => prev.filter(u => u.id !== id));
+  };
 
   const addStudent = (studentData: Omit<Student, 'id'>) => {
     const newStudent: Student = {
@@ -103,8 +144,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         }
       });
 
-      // Remove cleared previous dues (optional, keeping them with 0 amount for record is better, filtering for display)
-      // For this logic, we will keep them but UI will filter 0s
       updateStudent(student.id, {
         previousDues: updatedPreviousDues,
         currentYearPaid: updatedCurrentPaid
@@ -122,7 +161,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AppContext.Provider value={{
-      user, login, logout, students, fees, payments,
+      user, login, logout, users, students, fees, payments,
+      saveUser, deleteUser,
       addStudent, updateStudent, deleteStudent, updateFeeStructure, recordPayment, getStudentBalance
     }}>
       {children}

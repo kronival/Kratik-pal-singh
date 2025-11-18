@@ -1,9 +1,12 @@
+
 export type UserRole = 'ADMIN' | 'ACCOUNTANT' | 'TEACHER' | 'PARENT';
 
 export interface User {
   id: string;
   name: string;
   role: UserRole;
+  username: string;
+  password?: string; // Optional for security in frontend state, but used in mock DB
 }
 
 export interface FeeStructure {

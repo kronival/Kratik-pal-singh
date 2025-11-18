@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom'; // Using hash router in App
 import { useApp } from '../context/AppContext';
@@ -59,7 +60,7 @@ const Sidebar = () => {
           {(user?.role === 'ADMIN') && (
             <Link to="/fees" className={navItemClass('/fees')}>
               <Settings size={20} />
-              Fee Config
+              Admin Config
             </Link>
           )}
 
@@ -72,7 +73,7 @@ const Sidebar = () => {
 
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3 px-4 py-3 mb-2">
-          <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
+          <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm border-2 border-indigo-50">
             {user?.name.charAt(0)}
           </div>
           <div className="flex-1 min-w-0">
@@ -82,7 +83,7 @@ const Sidebar = () => {
         </div>
         <button 
           onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
         >
           <LogOut size={16} />
           Sign Out
