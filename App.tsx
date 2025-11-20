@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
@@ -10,6 +9,7 @@ import Payments from './pages/Payments';
 import Fees from './pages/Fees';
 import Reports from './pages/Reports';
 import StudentProfile from './pages/StudentProfile';
+import './services/firebase'; // Initialize Firebase
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user } = useApp();
