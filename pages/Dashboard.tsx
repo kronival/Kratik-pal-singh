@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
@@ -78,7 +77,7 @@ const Dashboard = () => {
   // Dynamic filters based on available classes (Sorted)
   const availableClasses = useMemo(() => {
       const classes = Array.from(new Set(students.map(s => s.className)));
-      return sortClasses(classes);
+      return sortClasses(classes as string[]);
   }, [students]);
 
   const filterChips = ['All Dues', 'Overdue', ...availableClasses.map(c => `Class ${c}`)];
@@ -88,7 +87,7 @@ const Dashboard = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between bg-white p-6 rounded-xl border border-gray-200 shadow-sm gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">St. Xavier's School</h2>
+          <h2 className="text-xl font-bold text-gray-800">Ajanta Public School</h2>
           <p className="text-sm text-gray-500">Fee Management Dashboard</p>
         </div>
         <div className="hidden md:flex items-center justify-center bg-blue-50 text-blue-600 font-bold rounded-full w-12 h-12 text-lg border border-blue-100">

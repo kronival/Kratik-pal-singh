@@ -44,7 +44,7 @@ const Login = () => {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-gray-50 focus:bg-white text-gray-900"
                         placeholder="Enter your username"
                         autoFocus
                     />
@@ -59,7 +59,7 @@ const Login = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-gray-50 focus:bg-white text-gray-900"
                         placeholder="Enter your password"
                     />
                 </div>
@@ -83,10 +83,10 @@ const Login = () => {
              <p className="text-xs text-center text-gray-400 uppercase font-semibold mb-3">Default Credentials</p>
              <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
                  <div className="bg-gray-50 p-2 rounded border border-gray-100 text-center">
-                     <span className="font-bold">admin</span> / 123
+                     <span className="font-bold text-gray-700">admin</span> / 123
                  </div>
                  <div className="bg-gray-50 p-2 rounded border border-gray-100 text-center">
-                     <span className="font-bold">acct</span> / 123
+                     <span className="font-bold text-gray-700">acct</span> / 123
                  </div>
              </div>
           </div>

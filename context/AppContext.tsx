@@ -131,12 +131,14 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
       let updatedPreviousDues = [...student.previousDues];
       let updatedCurrentPaid = student.currentYearPaid;
 
+      // The allocation array contains the distribution of (Amount Paid + Discount)
       paymentData.allocations.forEach(alloc => {
         if (alloc.year === '2025-26') {
           updatedCurrentPaid += alloc.amount;
         } else {
           updatedPreviousDues = updatedPreviousDues.map(due => {
             if (due.year === alloc.year) {
+              // Reduce the pending due by the allocated amount
               return { ...due, amount: due.amount - alloc.amount };
             }
             return due;

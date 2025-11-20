@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { Student, PaymentAllocation, Payment } from '../types';
+import { Student, PaymentAllocation, Payment, PendingDue } from '../types';
 import { 
   Search, Check, Printer, User, Calendar, 
   CreditCard, Banknote, Wallet, History, 
-  AlertCircle, ArrowRight, X, ChevronRight 
+  AlertCircle, ArrowRight, X, ChevronRight, Percent, Calculator
 } from 'lucide-react';
 import { sortClasses } from '../services/mockData';
 import { useLocation } from 'react-router-dom';
@@ -20,6 +20,7 @@ const Payments = () => {
   
   // Step 2: Entry
   const [amount, setAmount] = useState<string>('');
+  const [discount, setDiscount] = useState<string>(''); // Admin only
   const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'UPI' | 'CHEQUE' | 'CARD'>('CASH');
   const [allocations, setAllocations] = useState<PaymentAllocation[]>([]);
   const [manualAllocation, setManualAllocation] = useState(false);
@@ -51,21 +52,31 @@ const Payments = () => {
     sortClasses(fees.map(f => f.className)), 
   [fees]);
 
-  // Initial allocation logic when amount changes
+  // Helper to sort dues by year (e.g. "2023-24" before "2024-25")
+  const sortDuesByYear = (dues: PendingDue[]) => {
+      return [...dues].sort((a, b) => a.year.localeCompare(b.year));
+  };
+
+  // Initial allocation logic when amount OR discount changes
   useEffect(() => {
     if (!selectedStudent || manualAllocation) return;
     
-    const val = parseFloat(amount);
-    if (!amount || isNaN(val) || val <= 0) {
+    const paidAmount = parseFloat(amount) || 0;
+    const discountAmount = parseFloat(discount) || 0;
+    const totalAvailable = paidAmount + discountAmount;
+
+    if (totalAvailable <= 0) {
       setAllocations([]);
       return;
     }
 
-    let remaining = val;
+    let remaining = totalAvailable;
     const newAllocations: PaymentAllocation[] = [];
 
-    // 1. Pay previous dues first
-    selectedStudent.previousDues.forEach(due => {
+    // 1. Pay previous dues first (Sorted Oldest First)
+    const sortedPrevDues = sortDuesByYear(selectedStudent.previousDues);
+    
+    sortedPrevDues.forEach(due => {
       if (remaining > 0 && Number(due.amount) > 0) {
         const paying = Math.min(remaining, Number(due.amount));
         newAllocations.push({ year: due.year, amount: paying });
@@ -81,17 +92,20 @@ const Payments = () => {
        remaining -= paying;
     }
 
-    // 3. Excess is not handled in this simple version (would remain unallocated)
     setAllocations(newAllocations);
-  }, [amount, selectedStudent, manualAllocation]);
+  }, [amount, discount, selectedStudent, manualAllocation]);
 
   const handleRecordPayment = () => {
-    if (!selectedStudent || !user || Number(amount) <= 0) return;
-    
-    // Validate total allocation matches amount
+    if (!selectedStudent || !user || Number(amount) < 0) return;
+    // Note: Amount can be 0 if full discount is applied
+    if (Number(amount) === 0 && Number(discount) <= 0) return;
+
+    // Validate total allocation matches total power (amount + discount)
     const totalAllocated = allocations.reduce((sum, a) => sum + a.amount, 0);
-    if (Math.abs(totalAllocated - Number(amount)) > 1) {
-      alert("Allocated amount must match the total payment amount.");
+    const totalPaymentPower = Number(amount) + (Number(discount) || 0);
+
+    if (Math.abs(totalAllocated - totalPaymentPower) > 1) {
+      alert("Allocated amount must match the total payment + discount.");
       return;
     }
 
@@ -99,6 +113,7 @@ const Payments = () => {
       studentId: selectedStudent.id,
       date: new Date().toISOString().split('T')[0],
       amount: Number(amount),
+      discount: Number(discount) || 0,
       method: paymentMethod,
       allocations,
       recordedBy: { id: user.id, name: user.name }
@@ -107,7 +122,6 @@ const Payments = () => {
     recordPayment(paymentData);
 
     // Simulate getting the record back (in real app, backend returns it)
-    // We'll construct a mock complete object for the receipt view
     const mockPaymentRecord: Payment = {
         ...paymentData,
         id: 'temp-' + Date.now(),
@@ -119,18 +133,15 @@ const Payments = () => {
 
   const resetForm = () => {
     setAmount('');
+    setDiscount('');
     setAllocations([]);
     setLastPayment(null);
     setNote('');
-    // Keep student selected? Maybe clear it to prevent double payment by mistake
-    // setSelectedStudentId(''); 
   };
 
   const clearSelection = () => {
       setSelectedStudentId('');
-      setAmount('');
-      setAllocations([]);
-      setLastPayment(null);
+      resetForm();
   };
 
   const getBalance = (student: Student) => {
@@ -138,6 +149,12 @@ const Payments = () => {
       const curr = student.currentYearFee - student.currentYearPaid;
       return prev + curr;
   }
+
+  // -- UI Helpers --
+  const totalAllocated = allocations.reduce((sum, a) => sum + a.amount, 0);
+  const totalAvailable = (Number(amount) || 0) + (Number(discount) || 0);
+  const allocationDiff = totalAvailable - totalAllocated;
+  const isAllocationValid = Math.abs(allocationDiff) < 1;
 
   // -- Subcomponents --
 
@@ -160,7 +177,7 @@ const Payments = () => {
           {/* Printable Area */}
           <div className="p-6 overflow-y-auto flex-1" id="receipt-content">
             <div className="text-center border-b border-dashed border-gray-200 pb-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900">St. Xavier's School</h2>
+                <h2 className="text-xl font-bold text-gray-900">Ajanta Public School</h2>
                 <p className="text-sm text-gray-500">Official Fee Receipt</p>
             </div>
 
@@ -188,11 +205,17 @@ const Payments = () => {
                     <span className="text-gray-600 text-sm">Amount Paid</span>
                     <span className="text-2xl font-bold text-gray-900">₹{lastPayment.amount}</span>
                 </div>
+                {lastPayment.discount && lastPayment.discount > 0 && (
+                    <div className="flex justify-between items-center mb-2 text-green-600">
+                        <span className="text-sm">Discount Applied</span>
+                        <span className="font-bold">-₹{lastPayment.discount}</span>
+                    </div>
+                )}
                 <div className="space-y-1 pt-2 border-t border-gray-200">
                     {lastPayment.allocations.map((alloc, i) => (
                         <div key={i} className="flex justify-between text-xs text-gray-500">
                             <span>{alloc.year === '2025-26' ? 'Tuition Fees (Current)' : `Arrears (${alloc.year})`}</span>
-                            <span>₹{alloc.amount}</span>
+                            <span>Cleared: ₹{alloc.amount}</span>
                         </div>
                     ))}
                 </div>
@@ -314,7 +337,7 @@ const Payments = () => {
                     
                     <div className="space-y-0">
                         {/* Previous Dues */}
-                        {selectedStudent.previousDues.map((due, idx) => (
+                        {sortDuesByYear(selectedStudent.previousDues).map((due, idx) => (
                              <div key={`prev-${idx}`} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
                                 <div className="flex flex-col">
                                     <span className="text-sm font-medium text-red-600">Arrears ({due.year})</span>
@@ -359,6 +382,9 @@ const Payments = () => {
                                 <div key={p.id} className="flex justify-between items-start">
                                     <div>
                                         <p className="text-sm font-bold text-gray-800">₹{p.amount}</p>
+                                        {p.discount && p.discount > 0 && (
+                                            <span className="text-xs text-green-600 block">(-₹{p.discount} off)</span>
+                                        )}
                                         <p className="text-xs text-gray-500">{p.date} • {p.method}</p>
                                     </div>
                                     <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{p.receiptNumber}</span>
@@ -394,7 +420,7 @@ const Payments = () => {
                         </div>
                         <div>
                              <label className="block text-xs font-semibold text-gray-500 uppercase mb-2">Payment Mode</label>
-                             <div className="grid grid-cols-4 gap-2">
+                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                  {[
                                      { id: 'CASH', icon: Banknote, label: 'Cash' },
                                      { id: 'UPI', icon: Wallet, label: 'UPI' },
@@ -404,40 +430,63 @@ const Payments = () => {
                                      <button
                                         key={m.id}
                                         onClick={() => setPaymentMethod(m.id as any)}
-                                        className={`flex flex-col items-center justify-center py-2 rounded-lg border transition-all ${
+                                        className={`flex flex-col items-center justify-center py-3 rounded-xl border-2 transition-all duration-200 ${
                                             paymentMethod === m.id 
-                                            ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm' 
-                                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                                            ? 'bg-blue-50 border-blue-600 text-blue-700 shadow-sm scale-[1.02]' 
+                                            : 'bg-white border-gray-100 text-gray-600 hover:border-gray-200 hover:bg-gray-50'
                                         }`}
                                      >
-                                         <m.icon size={18} className="mb-1" />
-                                         <span className="text-[10px] font-bold">{m.label}</span>
+                                         <m.icon size={20} className="mb-1" />
+                                         <span className="text-xs font-bold">{m.label}</span>
                                      </button>
                                  ))}
                              </div>
                         </div>
                     </div>
 
-                    <div className="mb-8">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Enter Amount</label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl font-bold">₹</span>
-                            <input 
-                                type="number" 
-                                placeholder="0.00"
-                                className="w-full pl-10 pr-4 py-4 text-3xl font-bold text-gray-900 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                value={amount}
-                                onChange={e => setAmount(e.target.value)}
-                                autoFocus
-                            />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Amount Received</label>
+                            <div className="relative">
+                                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-4xl font-bold pointer-events-none">₹</span>
+                                <input 
+                                    type="number" 
+                                    placeholder="0"
+                                    className="w-full pl-16 pr-6 py-6 text-4xl font-bold text-gray-900 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all placeholder-gray-300 bg-white shadow-sm"
+                                    value={amount}
+                                    onChange={e => setAmount(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
                         </div>
+                        
+                        {/* Admin Only Discount Field */}
+                        {user?.role === 'ADMIN' && (
+                            <div>
+                                <label className="block text-sm font-semibold text-green-700 mb-2 flex items-center gap-1">
+                                    <Percent size={14} /> Discount / Waiver
+                                </label>
+                                <div className="relative shadow-sm rounded-xl">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500 text-xl font-bold">-₹</span>
+                                    <input 
+                                        type="number" 
+                                        placeholder="0"
+                                        className="w-full pl-12 pr-4 py-4 text-xl font-bold text-green-700 border border-green-200 bg-green-50 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                                        value={discount}
+                                        onChange={e => setDiscount(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Allocation Section */}
-                    <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 mb-8">
-                        <div className="flex justify-between items-center mb-4">
-                            <h4 className="font-bold text-gray-700 text-sm uppercase">Allocation Details</h4>
-                            <label className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer">
+                    <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 mb-8 transition-colors">
+                        <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
+                            <h4 className="font-bold text-gray-700 text-sm uppercase flex items-center gap-2">
+                                <Calculator size={16} /> Allocation Breakdown
+                            </h4>
+                            <label className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:text-blue-800 transition-colors">
                                 <input 
                                     type="checkbox" 
                                     checked={manualAllocation}
@@ -448,16 +497,32 @@ const Payments = () => {
                             </label>
                         </div>
 
+                        {/* Balance Check Indicator */}
+                        <div className="grid grid-cols-3 gap-2 mb-4 text-center text-xs sm:text-sm">
+                            <div className="bg-white p-2 rounded border border-gray-100">
+                                <p className="text-gray-500">Total Available</p>
+                                <p className="font-bold text-gray-900">₹{totalAvailable}</p>
+                            </div>
+                            <div className="bg-white p-2 rounded border border-gray-100">
+                                <p className="text-gray-500">Allocated</p>
+                                <p className="font-bold text-blue-600">₹{totalAllocated}</p>
+                            </div>
+                            <div className={`p-2 rounded border ${isAllocationValid ? 'bg-green-50 border-green-100 text-green-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
+                                <p className="opacity-70">Remaining</p>
+                                <p className="font-bold">₹{allocationDiff}</p>
+                            </div>
+                        </div>
+
                         {allocations.length > 0 ? (
                             <div className="space-y-3">
                                 {allocations.map((alloc, i) => (
                                     <div key={i} className="flex items-center gap-4 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                                        <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs">
+                                        <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs shrink-0">
                                             {alloc.year.slice(0,4)}
                                         </div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-bold text-gray-900">
-                                                {alloc.year === '2025-26' ? 'Current Session Fee' : `Previous Dues (${alloc.year})`}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-gray-900 truncate">
+                                                {alloc.year === '2025-26' ? 'Current Session' : `Arrears ${alloc.year}`}
                                             </p>
                                             <div className="w-full bg-gray-100 h-1.5 rounded-full mt-1 overflow-hidden">
                                                 <div className="h-full bg-blue-500 rounded-full" style={{ width: '100%' }}></div>
@@ -468,7 +533,7 @@ const Payments = () => {
                                                 <span className="text-gray-400 text-sm font-medium">₹</span>
                                                 <input 
                                                     type="number" 
-                                                    className="w-20 border border-gray-300 rounded px-2 py-1 text-right font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                                                    className="w-24 border border-gray-300 rounded px-2 py-1 text-right font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none"
                                                     value={alloc.amount}
                                                     onChange={e => {
                                                         const val = parseFloat(e.target.value) || 0;
@@ -479,29 +544,31 @@ const Payments = () => {
                                                 />
                                             </div>
                                         ) : (
-                                            <span className="font-bold text-lg text-gray-900">₹{alloc.amount}</span>
+                                            <span className="font-bold text-lg text-gray-900 whitespace-nowrap">₹{alloc.amount}</span>
                                         )}
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-6 text-gray-400 text-sm">
+                            <div className="text-center py-6 text-gray-400 text-sm bg-white/50 rounded-lg border border-dashed border-gray-200">
                                 <p>Enter an amount to view allocation breakdown.</p>
                             </div>
                         )}
                         
                         {/* Unallocated Warning */}
-                        {Number(amount) > 0 && Math.abs(allocations.reduce((s, a) => s + a.amount, 0) - Number(amount)) > 1 && (
-                             <div className="mt-4 p-3 bg-red-50 text-red-700 text-sm rounded-lg flex items-center gap-2">
+                        {!isAllocationValid && (Number(amount) > 0 || Number(discount) > 0) && (
+                             <div className="mt-4 p-3 bg-red-50 text-red-700 text-sm rounded-lg flex items-center gap-2 animate-pulse">
                                  <AlertCircle size={16} />
-                                 Allocation total does not match payment amount.
+                                 {allocationDiff > 0 
+                                    ? `You have ₹${allocationDiff} remaining to allocate.` 
+                                    : `You have allocated ₹${Math.abs(allocationDiff)} more than available.`}
                              </div>
                         )}
                     </div>
 
                     <button 
                         onClick={handleRecordPayment}
-                        disabled={!amount || Number(amount) <= 0}
+                        disabled={!isAllocationValid || (Number(amount) <= 0 && Number(discount) <= 0) || !selectedStudent}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         <Check size={24} />

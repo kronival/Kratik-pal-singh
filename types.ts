@@ -49,6 +49,7 @@ export interface Payment {
   studentId: string;
   date: string;
   amount: number;
+  discount?: number; // Amount waived off
   method: 'CASH' | 'UPI' | 'CHEQUE' | 'CARD';
   allocations: PaymentAllocation[];
   recordedBy: {
