@@ -7,9 +7,12 @@ import {
   CreditCard, Banknote, Wallet, History, 
   AlertCircle, ArrowRight, X, ChevronRight 
 } from 'lucide-react';
+import { sortClasses } from '../services/mockData';
+import { useLocation } from 'react-router-dom';
 
 const Payments = () => {
   const { students, fees, payments, recordPayment, user } = useApp();
+  const location = useLocation();
   
   // Step 1: Selection
   const [selectedClass, setSelectedClass] = useState('');
@@ -25,6 +28,16 @@ const Payments = () => {
   // Step 3: Result
   const [lastPayment, setLastPayment] = useState<Payment | null>(null);
 
+  // Handle incoming navigation state (redirect from Dashboard/Profile)
+  useEffect(() => {
+    if (location.state && location.state.studentId) {
+        if (location.state.className) {
+            setSelectedClass(location.state.className);
+        }
+        setSelectedStudentId(location.state.studentId);
+    }
+  }, [location.state]);
+
   // Derived Data
   const selectedStudent = useMemo(() => 
     students.find(s => s.id === selectedStudentId), 
@@ -35,7 +48,7 @@ const Payments = () => {
   [payments, selectedStudentId]);
 
   const availableClasses = useMemo(() => 
-    fees.map(f => f.className).sort(), 
+    sortClasses(fees.map(f => f.className)), 
   [fees]);
 
   // Initial allocation logic when amount changes
@@ -201,7 +214,7 @@ const Payments = () => {
                 onClick={resetForm} 
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
             >
-              Next Payment <ArrowRight size={18} />
+              Next <span className="hidden sm:inline">Payment</span> <ArrowRight size={18} />
             </button>
           </div>
         </div>
@@ -220,16 +233,16 @@ const Payments = () => {
         </div>
         
         {/* Quick Class Filter / Search Bar */}
-        <div className="flex items-center gap-2 bg-white p-1 rounded-lg border border-gray-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-white p-1 rounded-lg border border-gray-200 shadow-sm w-full md:w-auto">
              <select 
-               className="bg-transparent text-sm font-medium text-gray-700 py-2 pl-3 pr-8 outline-none border-r border-gray-100"
+               className="bg-transparent text-sm font-medium text-gray-700 py-2 pl-3 pr-8 outline-none border-b sm:border-b-0 sm:border-r border-gray-100 w-full sm:w-auto"
                value={selectedClass}
                onChange={e => { setSelectedClass(e.target.value); setSelectedStudentId(''); }}
              >
                <option value="">Class...</option>
                {availableClasses.map(c => <option key={c} value={c}>{c}</option>)}
              </select>
-             <div className="relative w-64">
+             <div className="relative w-full sm:w-64">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                 <select 
                     className="w-full appearance-none bg-transparent text-sm py-2 pl-8 pr-4 outline-none text-gray-700 placeholder-gray-400 cursor-pointer"
@@ -248,7 +261,7 @@ const Payments = () => {
       </div>
 
       {!selectedStudent ? (
-         <div className="flex flex-col items-center justify-center h-96 bg-white rounded-2xl border border-dashed border-gray-300 text-center">
+         <div className="flex flex-col items-center justify-center h-96 bg-white rounded-2xl border border-dashed border-gray-300 text-center p-4">
             <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6 text-blue-500">
                 <Search size={40} />
             </div>

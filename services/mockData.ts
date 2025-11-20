@@ -1,6 +1,19 @@
 
 import { Student, FeeStructure, Payment, User } from '../types';
 
+export const CLASS_ORDER = ['LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+export const sortClasses = (classes: string[]) => {
+  return classes.sort((a, b) => {
+    const idxA = CLASS_ORDER.indexOf(a);
+    const idxB = CLASS_ORDER.indexOf(b);
+    // If a class is not found in the list, put it at the end
+    if (idxA === -1) return 1;
+    if (idxB === -1) return -1;
+    return idxA - idxB;
+  });
+};
+
 export const INITIAL_FEES: FeeStructure[] = [
   { className: 'LKG', tuitionFee: 10000, annualFee: 5000, total: 15000 },
   { className: 'UKG', tuitionFee: 10000, annualFee: 5000, total: 15000 },

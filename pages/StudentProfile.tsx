@@ -50,7 +50,7 @@ const StudentProfile = () => {
               
               <div className="flex gap-3">
                   <button 
-                     onClick={() => navigate('/payments')} 
+                     onClick={() => navigate('/payments', { state: { studentId: student.id, className: student.className } })} 
                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2 shadow-sm transition-colors"
                   >
                     <CreditCard size={18} /> Pay Fees
