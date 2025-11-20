@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
@@ -83,38 +84,38 @@ const Dashboard = () => {
   const filterChips = ['All Dues', 'Overdue', ...availableClasses.map(c => `Class ${c}`)];
 
   return (
-    <div className="flex flex-col gap-6 w-full bg-gray-50 min-h-full">
+    <div className="flex flex-col gap-6 w-full min-h-full">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between bg-white p-6 rounded-xl border border-gray-200 shadow-sm gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm gap-4 transition-colors">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Ajanta Public School</h2>
-          <p className="text-sm text-gray-500">Fee Management Dashboard</p>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Ajanta Public School</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Fee Management Dashboard</p>
         </div>
-        <div className="hidden md:flex items-center justify-center bg-blue-50 text-blue-600 font-bold rounded-full w-12 h-12 text-lg border border-blue-100">
+        <div className="hidden md:flex items-center justify-center bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 font-bold rounded-full w-12 h-12 text-lg border border-blue-100 dark:border-slate-600">
           {user?.name?.charAt(0).toUpperCase()}
         </div>
       </div>
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex flex-col p-5 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm transition-colors">
           <div className="flex items-center gap-2 mb-2">
-             <AlertCircle size={18} className="text-gray-400" />
-             <p className="text-sm font-medium text-gray-500">Total Outstanding</p>
+             <AlertCircle size={18} className="text-gray-400 dark:text-gray-500" />
+             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Outstanding</p>
           </div>
-          <p className="text-3xl font-bold text-gray-900">₹{totalOutstanding.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">₹{totalOutstanding.toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
             <ArrowUp size={16} className="text-red-500" />
             <p className="text-red-500 text-sm font-medium">+2.5% from last month</p>
           </div>
         </div>
 
-        <div className="flex flex-col p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex flex-col p-5 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm transition-colors">
           <div className="flex items-center gap-2 mb-2">
-             <TrendingUp size={18} className="text-gray-400" />
-             <p className="text-sm font-medium text-gray-500">Collection Today</p>
+             <TrendingUp size={18} className="text-gray-400 dark:text-gray-500" />
+             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Collection Today</p>
           </div>
-          <p className="text-3xl font-bold text-gray-900">₹{collectedToday.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">₹{collectedToday.toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
             <ArrowDown size={16} className="text-green-500" />
             <p className="text-green-500 text-sm font-medium">Steady flow today</p>
@@ -126,10 +127,10 @@ const Dashboard = () => {
       <div className="space-y-3">
         <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
             </div>
             <input 
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition duration-150 ease-in-out"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-xl leading-5 bg-white dark:bg-slate-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition duration-150 ease-in-out"
                 placeholder="Search student by name or ID..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -146,7 +147,7 @@ const Dashboard = () => {
                 className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
                   isActive 
                     ? 'bg-blue-600 text-white shadow-md' 
-                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                    : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                 }`}
               >
                 {chip}
@@ -157,28 +158,28 @@ const Dashboard = () => {
       </div>
 
       {/* List Header */}
-      <h3 className="text-lg font-bold text-gray-800 px-1">
-        Students with Dues <span className="text-gray-400 font-normal text-sm ml-2">({filteredList.length})</span>
+      <h3 className="text-lg font-bold text-gray-800 dark:text-white px-1">
+        Students with Dues <span className="text-gray-400 dark:text-gray-500 font-normal text-sm ml-2">({filteredList.length})</span>
       </h3>
 
       {/* Students List */}
       <div className="grid gap-4">
         {filteredList.map(student => (
-            <div key={student.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <div key={student.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-800 p-5 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
               <div className="flex items-start gap-4 mb-4 sm:mb-0">
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
                       <User size={24} />
                   </div>
                   <div>
-                      <h4 className="font-bold text-gray-900 text-lg">{student.name}</h4>
-                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                          <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-semibold text-gray-600">Class {student.className}</span>
+                      <h4 className="font-bold text-gray-900 dark:text-white text-lg">{student.name}</h4>
+                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          <span className="bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-xs font-semibold text-gray-600 dark:text-gray-300">Class {student.className}</span>
                           <span>•</span>
                           <span>{student.admissionNumber}</span>
                       </div>
                       <div className="mt-2">
                         <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                            student.statusLabel === 'Overdue' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                            student.statusLabel === 'Overdue' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
                         }`}>
                             {student.statusLabel}
                         </span>
@@ -188,12 +189,12 @@ const Dashboard = () => {
 
               <div className="flex items-center justify-between w-full sm:w-auto gap-6 pl-16 sm:pl-0">
                   <div className="text-left sm:text-right">
-                      <p className="text-xs text-gray-500 uppercase font-semibold">Total Due</p>
-                      <p className="text-xl font-bold text-gray-900">₹{student.totalDue.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">Total Due</p>
+                      <p className="text-xl font-bold text-gray-900 dark:text-white">₹{student.totalDue.toLocaleString()}</p>
                   </div>
                   <button 
                     onClick={() => navigate('/payments', { state: { studentId: student.id, className: student.className } })}
-                    className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center shadow-sm active:scale-95"
+                    className="bg-blue-600 dark:bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center justify-center shadow-sm active:scale-95"
                     title="Pay Fees"
                   >
                       <CreditCard size={20} />
@@ -202,9 +203,9 @@ const Dashboard = () => {
             </div>
         ))}
         {filteredList.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-white rounded-xl border border-dashed border-gray-300">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                    <Search size={24} className="text-gray-400" />
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 rounded-xl border border-dashed border-gray-300 dark:border-slate-600">
+                <div className="w-16 h-16 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+                    <Search size={24} className="text-gray-400 dark:text-gray-500" />
                 </div>
                 <p className="text-lg font-medium">No students found</p>
                 <p className="text-sm">Try adjusting your filters or search query</p>

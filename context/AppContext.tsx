@@ -19,12 +19,38 @@ interface AppContextType {
   updateFeeStructure: (fee: FeeStructure) => void;
   recordPayment: (payment: Omit<Payment, 'id' | 'receiptNumber'>) => void;
   getStudentBalance: (studentId: string) => number;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children?: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  
+  // Theme State
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
   
   // Initialize state from localStorage or fall back to mocks
   const [users, setUsers] = useState<User[]>(() => {
@@ -165,7 +191,8 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
     <AppContext.Provider value={{
       user, login, logout, users, students, fees, payments,
       saveUser, deleteUser,
-      addStudent, updateStudent, deleteStudent, updateFeeStructure, recordPayment, getStudentBalance
+      addStudent, updateStudent, deleteStudent, updateFeeStructure, recordPayment, getStudentBalance,
+      theme, toggleTheme
     }}>
       {children}
     </AppContext.Provider>

@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { Payment, Student } from '../types';
@@ -234,7 +235,7 @@ const Reports: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1">
         {/* Headline Text */}
-        <h2 className="text-gray-900 tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">
+        <h2 className="text-gray-900 dark:text-white tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">
           Select a Report
         </h2>
 
@@ -245,16 +246,16 @@ const Reports: React.FC = () => {
             onClick={() => handleReportTypeChange('outstanding')}
             className={`flex flex-1 gap-3 rounded-xl border p-4 flex-col cursor-pointer transition-all duration-200 ${
               activeReport === 'outstanding' 
-                ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' 
-                : 'border-gray-200 bg-white hover:border-blue-200 shadow-sm hover:shadow-md'
+                ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 ring-1 ring-blue-600 dark:ring-blue-500' 
+                : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md'
             }`}
           >
-            <div className="text-blue-600 text-3xl">
+            <div className="text-blue-600 dark:text-blue-400 text-3xl">
               <span className="material-symbols-outlined">report</span>
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-gray-900 text-base font-bold leading-tight">Outstanding Fees</h3>
-              <p className="text-gray-500 text-sm font-normal leading-normal">View pending fees by class</p>
+              <h3 className="text-gray-900 dark:text-white text-base font-bold leading-tight">Outstanding Fees</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">View pending fees by class</p>
             </div>
           </div>
 
@@ -263,16 +264,16 @@ const Reports: React.FC = () => {
             onClick={() => handleReportTypeChange('collection')}
             className={`flex flex-1 gap-3 rounded-xl border p-4 flex-col cursor-pointer transition-all duration-200 ${
               activeReport === 'collection' 
-                ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' 
-                : 'border-gray-200 bg-white hover:border-blue-200 shadow-sm hover:shadow-md'
+                ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 ring-1 ring-blue-600 dark:ring-blue-500' 
+                : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md'
             }`}
           >
-            <div className="text-blue-600 text-3xl">
+            <div className="text-blue-600 dark:text-blue-400 text-3xl">
               <span className="material-symbols-outlined">request_quote</span>
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-gray-900 text-base font-bold leading-tight">Collection Summary</h3>
-              <p className="text-gray-500 text-sm font-normal leading-normal">Total fees collected in a date range</p>
+              <h3 className="text-gray-900 dark:text-white text-base font-bold leading-tight">Collection Summary</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Total fees collected in a date range</p>
             </div>
           </div>
 
@@ -281,16 +282,16 @@ const Reports: React.FC = () => {
             onClick={() => handleReportTypeChange('ledger')}
             className={`flex flex-1 gap-3 rounded-xl border p-4 flex-col cursor-pointer transition-all duration-200 ${
               activeReport === 'ledger' 
-                ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' 
-                : 'border-gray-200 bg-white hover:border-blue-200 shadow-sm hover:shadow-md'
+                ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 ring-1 ring-blue-600 dark:ring-blue-500' 
+                : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md'
             }`}
           >
-            <div className="text-blue-600 text-3xl">
+            <div className="text-blue-600 dark:text-blue-400 text-3xl">
               <span className="material-symbols-outlined">person_search</span>
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-gray-900 text-base font-bold leading-tight">Student Ledger</h3>
-              <p className="text-gray-500 text-sm font-normal leading-normal">Transaction history for a student</p>
+              <h3 className="text-gray-900 dark:text-white text-base font-bold leading-tight">Student Ledger</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Transaction history for a student</p>
             </div>
           </div>
 
@@ -299,29 +300,29 @@ const Reports: React.FC = () => {
              onClick={() => handleReportTypeChange('daily')}
              className={`flex flex-1 gap-3 rounded-xl border p-4 flex-col cursor-pointer transition-all duration-200 ${
                activeReport === 'daily' 
-                 ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' 
-                 : 'border-gray-200 bg-white hover:border-blue-200 shadow-sm hover:shadow-md'
+                 ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 ring-1 ring-blue-600 dark:ring-blue-500' 
+                 : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md'
              }`}
           >
-            <div className="text-blue-600 text-3xl">
+            <div className="text-blue-600 dark:text-blue-400 text-3xl">
               <span className="material-symbols-outlined">today</span>
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-gray-900 text-base font-bold leading-tight">Daily Payments</h3>
-              <p className="text-gray-500 text-sm font-normal leading-normal">All payments on a specific date</p>
+              <h3 className="text-gray-900 dark:text-white text-base font-bold leading-tight">Daily Payments</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">All payments on a specific date</p>
             </div>
           </div>
         </div>
 
         {/* Filter and Generate Report Section */}
-        <div className="px-4 py-4 mt-4 border-t border-gray-200">
-          <h3 className="text-gray-900 text-xl font-bold leading-tight pb-4">Generate Report</h3>
+        <div className="px-4 py-4 mt-4 border-t border-gray-200 dark:border-slate-700">
+          <h3 className="text-gray-900 dark:text-white text-xl font-bold leading-tight pb-4">Generate Report</h3>
           <div className="space-y-4 max-w-3xl">
             
             {/* Date Filters - Hidden for Outstanding Fees */}
             {activeReport !== 'outstanding' && (
               <div>
-                <label className="block text-sm font-medium text-gray-600 pb-1.5">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 pb-1.5">
                    {activeReport === 'daily' ? 'Select Date' : 'Select Date Range'}
                 </label>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -332,17 +333,17 @@ const Reports: React.FC = () => {
                         setStartDate(e.target.value);
                         if (activeReport === 'daily') setEndDate(e.target.value);
                     }}
-                    className="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
+                    className="block w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
                   />
                   {activeReport !== 'daily' && (
                     <>
-                        <span className="text-gray-500 hidden sm:inline">-</span>
-                        <span className="text-gray-500 sm:hidden text-xs text-center w-full">to</span>
+                        <span className="text-gray-500 dark:text-gray-400 hidden sm:inline">-</span>
+                        <span className="text-gray-500 dark:text-gray-400 sm:hidden text-xs text-center w-full">to</span>
                         <input 
                             type="date" 
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
+                            className="block w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
                         />
                     </>
                   )}
@@ -352,12 +353,12 @@ const Reports: React.FC = () => {
 
             {/* Class Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-600 pb-1.5" htmlFor="class-filter">Filter by Class</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 pb-1.5" htmlFor="class-filter">Filter by Class</label>
               <select 
                 id="class-filter"
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                className="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
+                className="block w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
               >
                 <option>All Classes</option>
                 {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -367,11 +368,11 @@ const Reports: React.FC = () => {
             {/* Staff/Recorder Filter - Only relevant for payment-based reports */}
             {activeReport !== 'outstanding' && (
               <div>
-                <label className="block text-sm font-medium text-gray-600 pb-1.5">Filter by Staff</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 pb-1.5">Filter by Staff</label>
                 <select 
                     value={selectedStaff}
                     onChange={(e) => setSelectedStaff(e.target.value)}
-                    className="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
+                    className="block w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
                 >
                     <option>All Staff</option>
                     {staffList.map(s => <option key={s} value={s}>{s}</option>)}
@@ -382,11 +383,11 @@ const Reports: React.FC = () => {
             {/* Student Filter (Only for Ledger) */}
             {activeReport === 'ledger' && (
               <div>
-                  <label className="block text-sm font-medium text-gray-600 pb-1.5">Select Student (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 pb-1.5">Select Student (Optional)</label>
                   <select
                     value={selectedStudentId}
                     onChange={e => setSelectedStudentId(e.target.value)}
-                    className="block w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
+                    className="block w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:border-blue-600 focus:ring-blue-600 p-2.5 border"
                   >
                       <option value="">-- All Students --</option>
                       {students.map(s => (
@@ -398,7 +399,7 @@ const Reports: React.FC = () => {
 
             <button 
               onClick={generateReport}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 px-4 text-center font-bold text-white transition-colors hover:bg-blue-700 shadow-sm mt-2"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 dark:bg-blue-500 py-3 px-4 text-center font-bold text-white transition-colors hover:bg-blue-700 dark:hover:bg-blue-600 shadow-sm mt-2"
             >
               <span className="material-symbols-outlined">summarize</span>
               Generate Report
@@ -408,23 +409,23 @@ const Reports: React.FC = () => {
 
         {/* Report View */}
         {generated && displayData && (
-          <div className="px-4 py-4 mt-4 border-t border-gray-200 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <div className="px-4 py-4 mt-4 border-t border-gray-200 dark:border-slate-700 animate-in slide-in-from-bottom-2 fade-in duration-300">
             {/* Report Header */}
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-gray-900 text-xl font-bold leading-tight capitalize">
+              <h3 className="text-gray-900 dark:text-white text-xl font-bold leading-tight capitalize">
                 {activeReport.replace('_', ' ')} Report
               </h3>
               <div className="flex items-center gap-2">
                 <button 
                     onClick={() => window.print()}
-                    className="flex items-center justify-center size-9 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-center size-9 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                     title="Print"
                 >
                   <span className="material-symbols-outlined text-lg">print</span>
                 </button>
                 <button 
                     onClick={exportPDF}
-                    className="flex items-center justify-center size-9 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-center size-9 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                     title="Download PDF"
                 >
                   <span className="material-symbols-outlined text-lg">download</span>
@@ -433,33 +434,33 @@ const Reports: React.FC = () => {
             </div>
 
             {/* Summary Card */}
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-between mb-6">
+            <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-between mb-6">
               <div>
-                <p className="text-sm font-medium text-emerald-700">{displayData.summary.label}</p>
-                <p className="text-2xl font-bold text-emerald-600">{displayData.summary.value}</p>
+                <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">{displayData.summary.label}</p>
+                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{displayData.summary.value}</p>
               </div>
-              <span className="material-symbols-outlined text-3xl text-emerald-600">
+              <span className="material-symbols-outlined text-3xl text-emerald-600 dark:text-emerald-400">
                 {displayData.summary.icon}
               </span>
             </div>
-            <p className="text-xs text-gray-500 -mt-4 mb-4">{displayData.subtitle}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 -mt-4 mb-4">{displayData.subtitle}</p>
 
             {/* Table View */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-700">
                     <tr>
                       {displayData.headers.map((h, i) => (
-                        <th key={i} className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{h}</th>
+                        <th key={i} className="px-6 py-4 font-semibold text-gray-900 dark:text-white whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
                     {displayData.rows.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                      <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
                         {row.map((cell: any, cIdx: number) => (
-                          <td key={cIdx} className="px-6 py-3 text-gray-600 whitespace-nowrap">
+                          <td key={cIdx} className="px-6 py-3 text-gray-600 dark:text-gray-300 whitespace-nowrap">
                             {cell}
                           </td>
                         ))}
@@ -467,7 +468,7 @@ const Reports: React.FC = () => {
                     ))}
                     {displayData.rows.length === 0 && (
                         <tr>
-                            <td colSpan={displayData.headers.length} className="px-6 py-8 text-center text-gray-500">
+                            <td colSpan={displayData.headers.length} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                 No records found for the selected criteria.
                             </td>
                         </tr>
