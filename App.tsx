@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import Sidebar from './components/Sidebar';
@@ -10,16 +11,32 @@ import Fees from './pages/Fees';
 import Reports from './pages/Reports';
 import StudentProfile from './pages/StudentProfile';
 import './services/firebase'; // Initialize Firebase
+import { Menu } from 'lucide-react';
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user } = useApp();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
-      <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-y-auto h-screen print:ml-0 print:p-0 print:overflow-visible">
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      
+      <main className="flex-1 md:ml-64 p-4 md:p-8 overflow-y-auto h-screen w-full print:ml-0 print:p-0 print:overflow-visible">
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg"
+          >
+            <Menu size={24} />
+          </button>
+          <span className="font-bold text-lg text-gray-800 dark:text-white">EduFee Pro</span>
+        </div>
+        
         {children}
       </main>
     </div>

@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { ArrowLeft, Calendar, CreditCard, AlertCircle, History, Edit2 } from 'lucide-react';
+import { ArrowLeft, Calendar, CreditCard, AlertCircle, History, Edit2, Users } from 'lucide-react';
 
 const StudentProfile = () => {
   const { id } = useParams();
@@ -14,6 +14,11 @@ const StudentProfile = () => {
   const history = useMemo(() => 
     payments.filter(p => p.studentId === id).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
   [payments, id]);
+
+  const siblings = useMemo(() => {
+    if (!student || !student.siblingIds || student.siblingIds.length === 0) return [];
+    return students.filter(s => student.siblingIds?.includes(s.id));
+  }, [student, students]);
 
   if (!student) {
     return <div className="p-12 text-center text-gray-500 dark:text-gray-400">Student not found</div>;
@@ -83,41 +88,69 @@ const StudentProfile = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          {/* Fee Status */}
-         <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-fit transition-colors">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <AlertCircle size={20} className="text-orange-500" />
-                Fee Status
-            </h3>
-            
-            <div className="space-y-4">
-               {student.previousDues.length > 0 && (
-                 <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg space-y-2">
-                    <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase">Arrears</span>
-                    {student.previousDues.map((d, i) => (
-                        <div key={i} className="flex justify-between items-center text-sm">
-                             <span className="text-gray-700 dark:text-gray-300">{d.year}</span>
-                             <span className="font-bold text-red-700 dark:text-red-400">₹{d.amount}</span>
-                        </div>
-                    ))}
-                 </div>
-               )}
+         <div className="lg:col-span-1 space-y-6">
+             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-fit transition-colors">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <AlertCircle size={20} className="text-orange-500" />
+                    Fee Status
+                </h3>
+                
+                <div className="space-y-4">
+                   {student.previousDues.length > 0 && (
+                     <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg space-y-2">
+                        <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase">Arrears</span>
+                        {student.previousDues.map((d, i) => (
+                            <div key={i} className="flex justify-between items-center text-sm">
+                                 <span className="text-gray-700 dark:text-gray-300">{d.year}</span>
+                                 <span className="font-bold text-red-700 dark:text-red-400">₹{d.amount}</span>
+                            </div>
+                        ))}
+                     </div>
+                   )}
 
-               <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-300">Current Year Fee</span>
-                  <span className="font-medium text-gray-900 dark:text-white">₹{student.currentYearFee.toLocaleString()}</span>
-               </div>
-               <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-300">Current Year Paid</span>
-                  <span className="font-bold text-green-600 dark:text-green-400">- ₹{student.currentYearPaid.toLocaleString()}</span>
-               </div>
-               
-               <div className="pt-4 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center">
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">Total Due</span>
-                  <span className={`text-xl font-bold ${totalDue > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
-                    ₹{totalDue.toLocaleString()}
-                  </span>
-               </div>
-            </div>
+                   <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-300">Current Year Fee</span>
+                      <span className="font-medium text-gray-900 dark:text-white">₹{student.currentYearFee.toLocaleString()}</span>
+                   </div>
+                   <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-300">Current Year Paid</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">- ₹{student.currentYearPaid.toLocaleString()}</span>
+                   </div>
+                   
+                   <div className="pt-4 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center">
+                      <span className="text-lg font-bold text-gray-900 dark:text-white">Total Due</span>
+                      <span className={`text-xl font-bold ${totalDue > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                        ₹{totalDue.toLocaleString()}
+                      </span>
+                   </div>
+                </div>
+             </div>
+
+             {/* Sibling Card */}
+             {siblings.length > 0 && (
+                 <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl shadow-sm border border-indigo-100 dark:border-indigo-900/30 p-6 transition-colors">
+                    <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-300 mb-4 flex items-center gap-2">
+                        <Users size={20} className="text-indigo-500" />
+                        Siblings
+                    </h3>
+                    <div className="space-y-3">
+                        {siblings.map(sib => (
+                            <div key={sib.id} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-indigo-100 dark:border-slate-600 flex justify-between items-center">
+                                <div>
+                                    <p className="font-bold text-gray-900 dark:text-white">{sib.name}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Class {sib.className}</p>
+                                </div>
+                                <button 
+                                    onClick={() => navigate(`/students/${sib.id}`)}
+                                    className="text-xs px-2 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/70 transition-colors"
+                                >
+                                    View
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                 </div>
+             )}
          </div>
 
          {/* Payment History */}

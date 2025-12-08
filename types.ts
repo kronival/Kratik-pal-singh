@@ -37,6 +37,7 @@ export interface Student {
   currentYearFee: number;
   currentYearPaid: number;
   isActive: boolean;
+  siblingIds?: string[]; // List of IDs of sibling students
 }
 
 export interface PaymentAllocation {

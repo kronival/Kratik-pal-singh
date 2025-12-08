@@ -167,7 +167,7 @@ const Dashboard = () => {
         {filteredList.map(student => (
             <div key={student.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-800 p-5 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
               <div className="flex items-start gap-4 mb-4 sm:mb-0">
-                  <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-500 dark:text-gray-400 shrink-0">
                       <User size={24} />
                   </div>
                   <div>
